@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Deal } from '../types';
 import { PlusCircle, X, Sparkles, Building2, ShieldCheck, Flame } from 'lucide-react';
 
+import { useCurrency } from '../context/CurrencyContext';
+
 interface CreateSyndicateModalProps {
   onClose: () => void;
   onCreateDeal: (newDeal: Deal) => void;
@@ -11,6 +13,7 @@ export const CreateSyndicateModal: React.FC<CreateSyndicateModalProps> = ({
   onClose,
   onCreateDeal
 }) => {
+  const { symbol } = useCurrency();
   const [title, setTitle] = useState('');
   const [tagline, setTagline] = useState('');
   const [category, setCategory] = useState<'CROWDFUND' | 'SYNDICATE' | 'PRE-SEED' | 'SERIES A'>('SYNDICATE');
@@ -125,7 +128,7 @@ export const CreateSyndicateModal: React.FC<CreateSyndicateModalProps> = ({
 
           <div className="grid grid-cols-3 gap-3">
             <div>
-              <label className="text-gray-300 block mb-1">VALUATION ($)</label>
+              <label className="text-gray-300 block mb-1">VALUATION ({symbol})</label>
               <input 
                 type="number" 
                 value={valuationNum}
@@ -134,7 +137,7 @@ export const CreateSyndicateModal: React.FC<CreateSyndicateModalProps> = ({
               />
             </div>
             <div>
-              <label className="text-gray-300 block mb-1">FUND TARGET ($)</label>
+              <label className="text-gray-300 block mb-1">FUND TARGET ({symbol})</label>
               <input 
                 type="number" 
                 value={fundTarget}
@@ -143,7 +146,7 @@ export const CreateSyndicateModal: React.FC<CreateSyndicateModalProps> = ({
               />
             </div>
             <div>
-              <label className="text-gray-300 block mb-1">MIN TICKET ($)</label>
+              <label className="text-gray-300 block mb-1">MIN TICKET ({symbol})</label>
               <input 
                 type="number" 
                 value={minTicketNum}

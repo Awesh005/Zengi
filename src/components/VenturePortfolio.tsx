@@ -15,11 +15,14 @@ import {
   Flame
 } from 'lucide-react';
 
+import { useCurrency } from '../context/CurrencyContext';
+
 interface VenturePortfolioProps {
   portfolio: PortfolioInvestment[];
 }
 
 export const VenturePortfolio: React.FC<VenturePortfolioProps> = ({ portfolio }) => {
+  const { formatCurrency } = useCurrency();
   const [selectedHolding, setSelectedHolding] = useState<PortfolioInvestment | null>(null);
   const [cashoutSuccessMsg, setCashoutSuccessMsg] = useState<string | null>(null);
 
@@ -30,7 +33,7 @@ export const VenturePortfolio: React.FC<VenturePortfolioProps> = ({ portfolio })
   const overallReturnPct = Math.round(((currentValueSum - totalInvested) / (totalInvested || 1)) * 100);
 
   const handleCashoutSecondary = (holding: PortfolioInvestment) => {
-    setCashoutSuccessMsg(`Liquidity request initiated for ${holding.companyName}. Realized value: $${holding.currentValue.toLocaleString()}`);
+    setCashoutSuccessMsg(`Liquidity request initiated for ${holding.companyName}. Realized value: ${formatCurrency(holding.currentValue)}`);
     setSelectedHolding(null);
     setTimeout(() => setCashoutSuccessMsg(null), 4000);
   };
@@ -58,7 +61,7 @@ export const VenturePortfolio: React.FC<VenturePortfolioProps> = ({ portfolio })
             </div>
 
             <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
-              PORTFOLIO NAV: <span className="gold-gradient-text">${currentValueSum.toLocaleString()}</span>
+              PORTFOLIO NAV: <span className="gold-gradient-text">{formatCurrency(currentValueSum)}</span>
             </h1>
 
             <p className="text-gray-300 text-sm">
@@ -67,7 +70,7 @@ export const VenturePortfolio: React.FC<VenturePortfolioProps> = ({ portfolio })
 
             <div className="flex items-center gap-3 pt-2">
               <span className="bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 px-3 py-1 rounded-xl text-xs font-mono font-bold">
-                TOTAL GAIN: +${totalUnrealizedProfit.toLocaleString()} (+{overallReturnPct}%)
+                TOTAL GAIN: +{formatCurrency(totalUnrealizedProfit)} (+{overallReturnPct}%)
               </span>
               <span className="bg-amber-500/20 border border-amber-400/40 text-amber-300 px-3 py-1 rounded-xl text-xs font-mono font-bold">
                 MOIC: {overallMultiple}x
@@ -78,7 +81,7 @@ export const VenturePortfolio: React.FC<VenturePortfolioProps> = ({ portfolio })
           <div className="lg:col-span-5 grid grid-cols-2 gap-4">
             <div className="bg-black/40 border border-white/10 p-4 rounded-2xl font-mono space-y-1">
               <div className="text-gray-400 text-[10px]">TOTAL CAPITAL DEPLOYED</div>
-              <div className="text-xl font-bold text-white">${totalInvested.toLocaleString()}</div>
+              <div className="text-xl font-bold text-white">{formatCurrency(totalInvested)}</div>
               <div className="text-[10px] text-gray-500">4 Active Positions</div>
             </div>
             <div className="bg-black/40 border border-white/10 p-4 rounded-2xl font-mono space-y-1">
@@ -134,11 +137,11 @@ export const VenturePortfolio: React.FC<VenturePortfolioProps> = ({ portfolio })
               <div className="grid grid-cols-3 gap-2 p-3 bg-black/40 rounded-xl border border-white/5 font-mono text-xs">
                 <div>
                   <div className="text-[10px] text-gray-500">INVESTED</div>
-                  <div className="text-white font-bold">${holding.investedAmount.toLocaleString()}</div>
+                  <div className="text-white font-bold">{formatCurrency(holding.investedAmount)}</div>
                 </div>
                 <div>
                   <div className="text-[10px] text-gray-500">CURRENT VALUE</div>
-                  <div className="text-amber-300 font-bold">${holding.currentValue.toLocaleString()}</div>
+                  <div className="text-amber-300 font-bold">{formatCurrency(holding.currentValue)}</div>
                 </div>
                 <div>
                   <div className="text-[10px] text-gray-500">PRO-RATA STAKE</div>
@@ -188,15 +191,15 @@ export const VenturePortfolio: React.FC<VenturePortfolioProps> = ({ portfolio })
             <div className="p-4 rounded-2xl bg-black/60 border border-white/10 space-y-2 font-mono text-xs">
               <div className="flex justify-between text-gray-400">
                 <span>TOTAL SHARES VALUE:</span>
-                <span className="text-amber-300 font-bold">${selectedHolding.currentValue.toLocaleString()}</span>
+                <span className="text-amber-300 font-bold">{formatCurrency(selectedHolding.currentValue)}</span>
               </div>
               <div className="flex justify-between text-gray-400">
                 <span>ORIGINAL COST BASIS:</span>
-                <span className="text-white font-bold">${selectedHolding.investedAmount.toLocaleString()}</span>
+                <span className="text-white font-bold">{formatCurrency(selectedHolding.investedAmount)}</span>
               </div>
               <div className="flex justify-between text-gray-400">
                 <span>ESTIMATED LIQUID PROFIT:</span>
-                <span className="text-emerald-400 font-bold">+${(selectedHolding.currentValue - selectedHolding.investedAmount).toLocaleString()}</span>
+                <span className="text-emerald-400 font-bold">+{formatCurrency(selectedHolding.currentValue - selectedHolding.investedAmount)}</span>
               </div>
             </div>
 

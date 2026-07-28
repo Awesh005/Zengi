@@ -26,6 +26,9 @@ interface NavbarProps {
   onOpenCreateModal: () => void;
 }
 
+import { useCurrency } from '../context/CurrencyContext';
+import { CurrencySwitcher } from './CurrencySwitcher';
+
 export const Navbar: React.FC<NavbarProps> = ({
   activeTab,
   setActiveTab,
@@ -37,6 +40,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenCreateModal
 }) => {
   const [showNotificationMenu, setShowNotificationMenu] = useState(false);
+  const { formatCurrency, formatPrice, currency } = useCurrency();
 
   return (
     <header className="sticky top-0 z-50 bg-[#0a0a0f]/90 backdrop-blur-xl border-b border-white/10 shadow-2xl">
@@ -47,12 +51,12 @@ export const Navbar: React.FC<NavbarProps> = ({
             <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
             LIVE ARENA TICKER
           </span>
-          <span className="text-gray-400">NLZ Bidding: <strong className="text-white">$42.50 (+14.2%)</strong></span>
+          <span className="text-gray-400">NLZ Bidding: <strong className="text-white">{formatPrice(42.50)} (+14.2%)</strong></span>
           <span className="text-gray-400">QSX Syndicate: <strong className="text-emerald-400">89% Funded</strong></span>
           <span className="text-gray-400">HMC Yield: <strong className="text-purple-300">18.4% APY</strong></span>
         </div>
         <div className="hidden lg:flex items-center gap-4 text-xs text-gray-400">
-          <span>TVL: <strong className="text-white">${(totalTVL / 1000000).toFixed(1)}M</strong></span>
+          <span>TVL: <strong className="text-white">{formatCurrency(totalTVL, { compact: true })}</strong></span>
           <span>Active Bids: <strong className="text-white">{activeDealsCount} Deals</strong></span>
           <span className="bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest border border-amber-500/30">
             DIGITAL REBEL TIER I
@@ -168,6 +172,9 @@ export const Navbar: React.FC<NavbarProps> = ({
               <span>List Syndicate</span>
             </button>
 
+            {/* Currency Switcher Widget (USD $ <-> INR ₹) */}
+            <CurrencySwitcher />
+
             {/* Wallet Balance Widget */}
             <div className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-xl px-3 py-1.5">
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center text-white shadow-inner">
@@ -176,7 +183,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               <div className="text-left">
                 <div className="text-[10px] text-gray-400 uppercase tracking-wider font-mono">REBEL BALANCE</div>
                 <div className="text-xs font-bold font-mono text-amber-300">
-                  ${walletBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  {formatCurrency(walletBalance, { precision: currency === 'INR' ? 0 : 2 })}
                 </div>
               </div>
             </div>

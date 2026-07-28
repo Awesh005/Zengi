@@ -19,6 +19,8 @@ import {
   Filter
 } from 'lucide-react';
 
+import { useCurrency } from '../context/CurrencyContext';
+
 interface BiddingArenaProps {
   deals: Deal[];
   activities: MarketActivity[];
@@ -32,6 +34,7 @@ export const BiddingArena: React.FC<BiddingArenaProps> = ({
   onOpenOrderModal,
   searchQuery
 }) => {
+  const { formatCurrency, formatPrice, currency } = useCurrency();
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
   const [activeDeals, setActiveDeals] = useState<Deal[]>(deals);
   const [quickBidAmounts, setQuickBidAmounts] = useState<{ [key: string]: number }>({});
@@ -55,7 +58,7 @@ export const BiddingArena: React.FC<BiddingArenaProps> = ({
 
   const handleQuickBidSubmit = (deal: Deal) => {
     const amount = quickBidAmounts[deal.id] || deal.minTicketNum;
-    setBidSuccessMessage(`Bid of $${amount.toLocaleString()} submitted for ${deal.title}!`);
+    setBidSuccessMessage(`Bid of ${formatCurrency(amount)} submitted for ${deal.title}!`);
     setTimeout(() => setBidSuccessMessage(null), 4000);
   };
 
@@ -100,9 +103,9 @@ export const BiddingArena: React.FC<BiddingArenaProps> = ({
             <div className="grid grid-cols-3 gap-4 pt-2 max-w-lg">
               <div className="bg-white/5 backdrop-blur-md rounded-2xl p-3 border border-white/10">
                 <div className="text-[10px] text-gray-400 uppercase font-mono">24H BID VOLUME</div>
-                <div className="text-lg font-black font-mono text-amber-300">$18,450,200</div>
+                <div className="text-lg font-black font-mono text-amber-300">{formatCurrency(18450200, { compact: true })}</div>
               </div>
-              <div className="bg-white/5 backdrop-blur-md rounded-2xl p-3 border border-white/10">
+              <div className="bg-[#white/5] backdrop-blur-md rounded-2xl p-3 border border-white/10">
                 <div className="text-[10px] text-gray-400 uppercase font-mono">LIVE BIDDERS</div>
                 <div className="text-lg font-black font-mono text-emerald-400">4,892</div>
               </div>
@@ -139,7 +142,7 @@ export const BiddingArena: React.FC<BiddingArenaProps> = ({
                 {/* Progress bar */}
                 <div className="space-y-1.5 mb-4">
                   <div className="flex justify-between text-xs font-mono">
-                    <span className="text-gray-400">Raised: ${(featuredDeal.totalFunded / 1000000).toFixed(2)}M</span>
+                    <span className="text-gray-400">Raised: {formatCurrency(featuredDeal.totalFunded, { compact: true })}</span>
                     <span className="text-amber-300 font-bold">
                       {Math.round((featuredDeal.totalFunded / featuredDeal.fundTarget) * 100)}%
                     </span>
@@ -155,7 +158,7 @@ export const BiddingArena: React.FC<BiddingArenaProps> = ({
                 <div className="flex items-center justify-between gap-3 pt-2">
                   <div>
                     <div className="text-[10px] text-gray-400 font-mono">CURRENT TOP BID</div>
-                    <div className="text-xl font-black font-mono text-white">${featuredDeal.currentBidPerShare}/share</div>
+                    <div className="text-xl font-black font-mono text-white">{formatPrice(featuredDeal.currentBidPerShare || 42.50)}/share</div>
                   </div>
 
                   <button
@@ -259,11 +262,11 @@ export const BiddingArena: React.FC<BiddingArenaProps> = ({
               <div className="grid grid-cols-2 gap-2 p-3 rounded-xl bg-white/[0.02] border border-white/5 font-mono text-xs mb-4">
                 <div>
                   <div className="text-[10px] text-gray-500 uppercase">VALUATION</div>
-                  <div className="font-bold text-white mt-0.5">{deal.valuation}</div>
+                  <div className="font-bold text-white mt-0.5">{formatCurrency(deal.valuationNum, { compact: true })}</div>
                 </div>
                 <div>
                   <div className="text-[10px] text-gray-500 uppercase">MIN TICKET</div>
-                  <div className="font-bold text-amber-300 mt-0.5">{deal.minTicket}</div>
+                  <div className="font-bold text-amber-300 mt-0.5">{formatCurrency(deal.minTicketNum, { compact: true })}</div>
                 </div>
                 <div>
                   <div className="text-[10px] text-gray-500 uppercase">PARTICIPANTS</div>
@@ -278,7 +281,7 @@ export const BiddingArena: React.FC<BiddingArenaProps> = ({
               {/* Progress Bar */}
               <div className="space-y-1.5 mb-5">
                 <div className="flex justify-between text-[11px] font-mono">
-                  <span className="text-gray-400">${(deal.totalFunded / 1000000).toFixed(2)}M raised</span>
+                  <span className="text-gray-400">{formatCurrency(deal.totalFunded, { compact: true })} raised</span>
                   <span className="text-purple-300 font-bold">{fundPct}%</span>
                 </div>
                 <div className="w-full h-2 bg-black rounded-full overflow-hidden p-0.5 border border-white/10">
@@ -304,7 +307,7 @@ export const BiddingArena: React.FC<BiddingArenaProps> = ({
                             : 'bg-white/5 border-white/10 text-gray-400 hover:text-white'
                         }`}
                       >
-                        ${amt}
+                        {formatCurrency(amt, { compact: true })}
                       </button>
                     ))}
                   </div>
@@ -315,7 +318,7 @@ export const BiddingArena: React.FC<BiddingArenaProps> = ({
                     onClick={() => handleQuickBidSubmit(deal)}
                     className="w-full py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs font-mono uppercase tracking-wider transition shadow-[0_0_15px_rgba(189,0,255,0.3)]"
                   >
-                    BID ${currentBid.toLocaleString()}
+                    BID {formatCurrency(currentBid)}
                   </button>
                   <button
                     onClick={() => onOpenOrderModal(deal)}

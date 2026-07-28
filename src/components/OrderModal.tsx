@@ -13,6 +13,8 @@ import {
   DollarSign
 } from 'lucide-react';
 
+import { useCurrency } from '../context/CurrencyContext';
+
 interface OrderModalProps {
   deal: Deal | null;
   onClose: () => void;
@@ -26,6 +28,7 @@ export const OrderModal: React.FC<OrderModalProps> = ({
 }) => {
   if (!deal) return null;
 
+  const { formatCurrency, formatPrice, symbol } = useCurrency();
   const [ticketAmount, setTicketAmount] = useState<number>(deal.minTicketNum * 5);
   const [sharePrice, setSharePrice] = useState<number>(deal.currentBidPerShare || 42.50);
   const [agreeTerms, setAgreeTerms] = useState<boolean>(true);
@@ -70,11 +73,11 @@ export const OrderModal: React.FC<OrderModalProps> = ({
         <div className="grid grid-cols-3 gap-3 p-3 rounded-2xl bg-black/50 border border-white/10 font-mono text-xs">
           <div>
             <div className="text-[10px] text-gray-500 uppercase">VALUATION</div>
-            <div className="text-white font-bold">{deal.valuation}</div>
+            <div className="text-white font-bold">{formatCurrency(deal.valuationNum, { compact: true })}</div>
           </div>
           <div>
             <div className="text-[10px] text-gray-500 uppercase">MIN ENTRY</div>
-            <div className="text-amber-300 font-bold">{deal.minTicket}</div>
+            <div className="text-amber-300 font-bold">{formatCurrency(deal.minTicketNum, { compact: true })}</div>
           </div>
           <div>
             <div className="text-[10px] text-gray-500 uppercase">REBEL SCORE</div>
@@ -88,8 +91,8 @@ export const OrderModal: React.FC<OrderModalProps> = ({
           {/* Ticket Capital Amount */}
           <div className="space-y-2">
             <div className="flex justify-between text-xs font-mono">
-              <label className="text-gray-300 font-bold">ALLOCATION TICKET AMOUNT ($)</label>
-              <span className="text-amber-300 font-extrabold text-sm">${ticketAmount.toLocaleString()}</span>
+              <label className="text-gray-300 font-bold">ALLOCATION TICKET AMOUNT ({symbol})</label>
+              <span className="text-amber-300 font-extrabold text-sm">{formatCurrency(ticketAmount)}</span>
             </div>
 
             <input 
@@ -115,7 +118,7 @@ export const OrderModal: React.FC<OrderModalProps> = ({
                       : 'bg-white/5 text-gray-400 hover:text-white hover:bg-white/10'
                   }`}
                 >
-                  ${amt >= 1000 ? `${amt / 1000}k` : amt}
+                  {formatCurrency(amt, { compact: true })}
                 </button>
               ))}
             </div>
@@ -124,8 +127,8 @@ export const OrderModal: React.FC<OrderModalProps> = ({
           {/* Share Price Bid Target */}
           <div className="space-y-1.5">
             <div className="flex justify-between text-xs font-mono">
-              <label className="text-gray-300 font-bold">BID PRICE PER SHARE ($)</label>
-              <span className="text-gray-400">Current Top Bid: ${deal.currentBidPerShare?.toFixed(2) || '42.50'}</span>
+              <label className="text-gray-300 font-bold">BID PRICE PER SHARE ({symbol})</label>
+              <span className="text-gray-400">Current Top Bid: {formatPrice(deal.currentBidPerShare || 42.50)}</span>
             </div>
             <input 
               type="number"
@@ -174,7 +177,7 @@ export const OrderModal: React.FC<OrderModalProps> = ({
             disabled={!agreeTerms || isSubmitting}
             className="w-full py-4 rounded-2xl bg-gradient-to-r from-amber-500 via-amber-400 to-amber-600 hover:from-amber-400 hover:to-amber-300 disabled:opacity-50 text-black font-extrabold text-sm font-mono uppercase tracking-widest shadow-[0_0_25px_rgba(255,215,0,0.5)] transition hover:scale-[1.01]"
           >
-            {isSubmitting ? 'PROCESSING ARENA BID...' : `CONFIRM ARENA BID ($${ticketAmount.toLocaleString()})`}
+            {isSubmitting ? 'PROCESSING ARENA BID...' : `CONFIRM ARENA BID (${formatCurrency(ticketAmount)})`}
           </button>
 
         </form>

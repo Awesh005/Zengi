@@ -16,6 +16,8 @@ import {
   ChevronDown
 } from 'lucide-react';
 
+import { useCurrency } from '../context/CurrencyContext';
+
 interface InvestorTerminalProps {
   deals: Deal[];
   orderBook: OrderBookEntry[];
@@ -27,6 +29,7 @@ export const InvestorTerminal: React.FC<InvestorTerminalProps> = ({
   orderBook,
   onPlaceOrder
 }) => {
+  const { formatCurrency, formatPrice, symbol } = useCurrency();
   const [selectedDeal, setSelectedDeal] = useState<Deal>(deals[0]);
   const [orderType, setOrderType] = useState<'buy' | 'sell'>('buy');
   const [ticketAmount, setTicketAmount] = useState<number>(5000);
@@ -39,7 +42,7 @@ export const InvestorTerminal: React.FC<InvestorTerminalProps> = ({
   const handleExecuteOrder = (e: React.FormEvent) => {
     e.preventDefault();
     onPlaceOrder(selectedDeal.id, ticketAmount, bidPrice, orderType);
-    setOrderExecutedMsg(`Order Submitted: ${orderType.toUpperCase()} $${ticketAmount.toLocaleString()} (${calculatedShares} Shares) @ $${bidPrice.toFixed(2)}/share`);
+    setOrderExecutedMsg(`Order Submitted: ${orderType.toUpperCase()} ${formatCurrency(ticketAmount)} (${calculatedShares} Shares) @ ${formatPrice(bidPrice)}/share`);
     setTimeout(() => setOrderExecutedMsg(null), 4000);
   };
 
@@ -91,11 +94,11 @@ export const InvestorTerminal: React.FC<InvestorTerminalProps> = ({
         <div className="flex items-center gap-6 text-xs font-mono">
           <div>
             <span className="text-gray-400 block text-[10px]">VALUATION</span>
-            <span className="text-white font-bold">{selectedDeal.valuation}</span>
+            <span className="text-white font-bold">{formatCurrency(selectedDeal.valuationNum, { compact: true })}</span>
           </div>
           <div>
             <span className="text-gray-400 block text-[10px]">BID PRICE</span>
-            <span className="text-amber-300 font-bold">${bidPrice.toFixed(2)}</span>
+            <span className="text-amber-300 font-bold">{formatPrice(bidPrice)}</span>
           </div>
           <div>
             <span className="text-gray-400 block text-[10px]">24H CHANGE</span>
@@ -103,7 +106,7 @@ export const InvestorTerminal: React.FC<InvestorTerminalProps> = ({
           </div>
           <div>
             <span className="text-gray-400 block text-[10px]">MIN TICKET</span>
-            <span className="text-purple-300 font-bold">{selectedDeal.minTicket}</span>
+            <span className="text-purple-300 font-bold">{formatCurrency(selectedDeal.minTicketNum, { compact: true })}</span>
           </div>
         </div>
 
@@ -135,9 +138,9 @@ export const InvestorTerminal: React.FC<InvestorTerminalProps> = ({
             {/* Simulated Depth Graphic Visualizer */}
             <div className="relative h-56 rounded-xl bg-black/50 border border-white/10 p-4 flex flex-col justify-between overflow-hidden">
               <div className="flex justify-between text-[10px] font-mono text-gray-500 z-10">
-                <span>BUY DEPTH ($1.4M)</span>
-                <span className="text-amber-300 font-bold">SPREAD: $0.40</span>
-                <span>SELL DEPTH ($2.1M)</span>
+                <span>BUY DEPTH ({formatCurrency(1400000, { compact: true })})</span>
+                <span className="text-amber-300 font-bold">SPREAD: {formatPrice(0.40)}</span>
+                <span>SELL DEPTH ({formatCurrency(2100000, { compact: true })})</span>
               </div>
 
               {/* Animated Depth SVG Chart */}
@@ -169,11 +172,11 @@ export const InvestorTerminal: React.FC<InvestorTerminalProps> = ({
               </div>
 
               <div className="relative z-10 flex justify-between text-xs font-mono mt-auto">
-                <span className="text-emerald-400 font-bold">$38.00</span>
+                <span className="text-emerald-400 font-bold">{formatPrice(38.00)}</span>
                 <span className="text-amber-300 font-extrabold bg-amber-500/20 px-3 py-1 rounded-full border border-amber-400/30">
-                  LAST MATCH: ${bidPrice.toFixed(2)}
+                  LAST MATCH: {formatPrice(bidPrice)}
                 </span>
-                <span className="text-rose-400 font-bold">$46.00</span>
+                <span className="text-rose-400 font-bold">{formatPrice(46.00)}</span>
               </div>
             </div>
           </div>
@@ -192,15 +195,15 @@ export const InvestorTerminal: React.FC<InvestorTerminalProps> = ({
               {/* Asks (Sells) */}
               <div className="space-y-1">
                 <div className="grid grid-cols-3 text-[10px] font-mono text-gray-500 pb-1 border-b border-white/5">
-                  <span>PRICE ($)</span>
+                  <span>PRICE ({symbol})</span>
                   <span className="text-right">SHARES</span>
-                  <span className="text-right">TOTAL ($)</span>
+                  <span className="text-right">TOTAL ({symbol})</span>
                 </div>
                 {orderBook.filter(o => o.type === 'sell').map((row, idx) => (
                   <div key={idx} className="grid grid-cols-3 text-xs font-mono py-1 hover:bg-rose-500/10 rounded px-1 transition">
-                    <span className="text-rose-400 font-bold">${row.price.toFixed(2)}</span>
+                    <span className="text-rose-400 font-bold">{formatPrice(row.price)}</span>
                     <span className="text-right text-gray-300">{row.amount.toLocaleString()}</span>
-                    <span className="text-right text-gray-400">${row.total.toLocaleString()}</span>
+                    <span className="text-right text-gray-400">{formatCurrency(row.total)}</span>
                   </div>
                 ))}
               </div>
@@ -208,15 +211,15 @@ export const InvestorTerminal: React.FC<InvestorTerminalProps> = ({
               {/* Bids (Buys) */}
               <div className="space-y-1">
                 <div className="grid grid-cols-3 text-[10px] font-mono text-gray-500 pb-1 border-b border-white/5">
-                  <span>PRICE ($)</span>
+                  <span>PRICE ({symbol})</span>
                   <span className="text-right">SHARES</span>
-                  <span className="text-right">TOTAL ($)</span>
+                  <span className="text-right">TOTAL ({symbol})</span>
                 </div>
                 {orderBook.filter(o => o.type === 'buy').map((row, idx) => (
                   <div key={idx} className="grid grid-cols-3 text-xs font-mono py-1 hover:bg-emerald-500/10 rounded px-1 transition">
-                    <span className="text-emerald-400 font-bold">${row.price.toFixed(2)}</span>
+                    <span className="text-emerald-400 font-bold">{formatPrice(row.price)}</span>
                     <span className="text-right text-gray-300">{row.amount.toLocaleString()}</span>
-                    <span className="text-right text-gray-400">${row.total.toLocaleString()}</span>
+                    <span className="text-right text-gray-400">{formatCurrency(row.total)}</span>
                   </div>
                 ))}
               </div>
@@ -285,8 +288,8 @@ export const InvestorTerminal: React.FC<InvestorTerminalProps> = ({
               {/* Ticket Capital Amount Slider & Input */}
               <div className="space-y-2">
                 <div className="flex justify-between text-xs font-mono">
-                  <label className="text-gray-400">ALLOCATION TICKET ($)</label>
-                  <span className="text-amber-300 font-bold">${ticketAmount.toLocaleString()}</span>
+                  <label className="text-gray-400">ALLOCATION TICKET ({symbol})</label>
+                  <span className="text-amber-300 font-bold">{formatCurrency(ticketAmount)}</span>
                 </div>
                 
                 <input 
@@ -313,8 +316,8 @@ export const InvestorTerminal: React.FC<InvestorTerminalProps> = ({
               {/* Share Price Target Input */}
               <div className="space-y-1.5">
                 <div className="flex justify-between text-xs font-mono">
-                  <label className="text-gray-400">TARGET SHARE PRICE ($)</label>
-                  <span className="text-gray-300">${bidPrice.toFixed(2)}</span>
+                  <label className="text-gray-400">TARGET SHARE PRICE ({symbol})</label>
+                  <span className="text-gray-300">{formatPrice(bidPrice)}</span>
                 </div>
                 <input 
                   type="number"
@@ -352,7 +355,7 @@ export const InvestorTerminal: React.FC<InvestorTerminalProps> = ({
                     : 'bg-gradient-to-r from-rose-500 to-red-600 hover:from-rose-400 hover:to-red-500 text-white shadow-[0_0_20px_rgba(244,63,94,0.4)]'
                 }`}
               >
-                SUBMIT {orderType.toUpperCase()} TICKET (${ticketAmount.toLocaleString()})
+                SUBMIT {orderType.toUpperCase()} TICKET ({formatCurrency(ticketAmount)})
               </button>
 
             </form>

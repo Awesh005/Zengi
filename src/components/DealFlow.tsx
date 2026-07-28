@@ -16,6 +16,8 @@ import {
   ChevronRight
 } from 'lucide-react';
 
+import { useCurrency } from '../context/CurrencyContext';
+
 interface DealFlowProps {
   deals: Deal[];
   onOpenOrderModal: (deal: Deal) => void;
@@ -23,6 +25,7 @@ interface DealFlowProps {
 }
 
 export const DealFlow: React.FC<DealFlowProps> = ({ deals, onOpenOrderModal, searchQuery }) => {
+  const { formatCurrency } = useCurrency();
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
   const [sortBy, setSortBy] = useState<'valuation' | 'funded' | 'rebelScore'>('rebelScore');
 
@@ -61,7 +64,7 @@ export const DealFlow: React.FC<DealFlowProps> = ({ deals, onOpenOrderModal, sea
           <div className="flex items-center gap-4 bg-black/40 p-4 rounded-2xl border border-white/10 font-mono text-xs">
             <div>
               <div className="text-gray-400 text-[10px]">TOTAL PIPELINE TVL</div>
-              <div className="text-xl font-bold text-white">$171.5M</div>
+              <div className="text-xl font-bold text-white">{formatCurrency(171500000, { compact: true })}</div>
             </div>
             <div className="w-px h-8 bg-white/10"></div>
             <div>
@@ -155,15 +158,15 @@ export const DealFlow: React.FC<DealFlowProps> = ({ deals, onOpenOrderModal, sea
                 <div className="grid grid-cols-3 gap-4 bg-black/40 p-4 rounded-2xl border border-white/5 font-mono text-xs">
                   <div>
                     <div className="text-[10px] text-gray-500 uppercase">VALUATION</div>
-                    <div className="font-bold text-white mt-0.5">{deal.valuation}</div>
+                    <div className="font-bold text-white mt-0.5">{formatCurrency(deal.valuationNum, { compact: true })}</div>
                   </div>
                   <div>
                     <div className="text-[10px] text-gray-500 uppercase">MIN TICKET</div>
-                    <div className="font-bold text-amber-300 mt-0.5">{deal.minTicket}</div>
+                    <div className="font-bold text-amber-300 mt-0.5">{formatCurrency(deal.minTicketNum, { compact: true })}</div>
                   </div>
                   <div>
                     <div className="text-[10px] text-gray-500 uppercase">RAISED</div>
-                    <div className="font-bold text-emerald-400 mt-0.5">${(deal.totalFunded / 1000000).toFixed(2)}M</div>
+                    <div className="font-bold text-emerald-400 mt-0.5">{formatCurrency(deal.totalFunded, { compact: true })}</div>
                   </div>
                 </div>
 

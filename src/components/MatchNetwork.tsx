@@ -16,12 +16,15 @@ import {
   CheckCircle2
 } from 'lucide-react';
 
+import { useCurrency } from '../context/CurrencyContext';
+
 interface MatchNetworkProps {
   matches: FounderMatch[];
   searchQuery: string;
 }
 
 export const MatchNetwork: React.FC<MatchNetworkProps> = ({ matches, searchQuery }) => {
+  const { formatCurrency } = useCurrency();
   const [filterTag, setFilterTag] = useState<string>('ALL');
   const [connectedIds, setConnectedIds] = useState<string[]>([]);
   const [selectedFounderForMsg, setSelectedFounderForMsg] = useState<FounderMatch | null>(null);
@@ -83,7 +86,7 @@ export const MatchNetwork: React.FC<MatchNetworkProps> = ({ matches, searchQuery
             <div className="w-px h-8 bg-white/10"></div>
             <div>
               <div className="text-gray-400 text-[10px]">AVG CAPITAL RAISED</div>
-              <div className="text-xl font-bold text-emerald-400">$2.8M</div>
+              <div className="text-xl font-bold text-emerald-400">{formatCurrency(2800000, { compact: true })}</div>
             </div>
           </div>
         </div>
