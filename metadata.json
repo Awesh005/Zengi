@@ -1,0 +1,6 @@
+{
+  "name": "Zengi",
+  "description": "High-stakes crowd bidding arena, curated deal flow, investor terminal, match network, and venture portfolio for the Digital Rebel ecosystem.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
