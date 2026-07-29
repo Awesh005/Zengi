@@ -13,7 +13,7 @@ export const Footer: React.FC = () => {
               ZENGI
             </span>
             <span className="bg-[#bd00ff] text-white text-[9px] font-black px-1.5 py-0.5 rounded tracking-tighter uppercase">
-              REBEL
+              REBELs
             </span>
           </div>
           <p className="text-xs leading-relaxed text-gray-400">
